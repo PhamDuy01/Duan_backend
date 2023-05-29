@@ -5,22 +5,34 @@ const { Schema } = mongoose;
 const bcrypt = require("bcrypt");
 
 const userSchema = new Schema({
-    email:{
+    email: {
         type: String,
         lowercase: true,
         require: true,
         unique: true
     },
-    password:{
+    password: {
         type: String,
         require: true
-    }
+    },
+    fullName: {
+        type: String,
+        require: false
+    },
+    phoneNumber: {
+        type: String,
+        required: false
+    },
+    address: {
+        type: String,
+        required: false
+    },
 });
 
-userSchema.pre('save', async function(){
+userSchema.pre('save', async function () {
     try {
         var user = this;
-        var salt = await(bcrypt.genSalt(10));
+        var salt = await (bcrypt.genSalt(10));
         const hashpass = await bcrypt.hash(user.password, salt);
 
         user.password = hashpass;
@@ -31,7 +43,7 @@ userSchema.pre('save', async function(){
 
 userSchema.methods.comparePassword = async function (userPassword) {
     try {
-        console.log('----------------no password',this.password);
+        console.log('----------------no password', this.password);
         // @ts-ignore
         const isMatch = await bcrypt.compare(userPassword, this.password);
         return isMatch;
