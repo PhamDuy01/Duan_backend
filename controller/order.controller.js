@@ -3,7 +3,7 @@ const Order = require('../model/order.model');
 // Tạo đơn hàng
 const createOrder = async (req, res) => {
   try {
-    const { user_id, items, total, phoneNumber, address, email, customerName } = req.body;
+    const { user_id, items, phoneNumber, address, email, customerName } = req.body;
 
     if (!phoneNumber || !address) {
       return res.status(400).json({
@@ -14,7 +14,6 @@ const createOrder = async (req, res) => {
     const newOrder = new Order({
       user_id,
       items,
-      total,
       phoneNumber,
       address,
       customerName,

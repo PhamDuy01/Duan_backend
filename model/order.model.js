@@ -38,7 +38,7 @@ const orderSchema = new mongoose.Schema({
     },
     total: {
         type: String,
-        required: true
+        required: false
     },
     isPaid: {
         type: Boolean,
@@ -74,10 +74,22 @@ const orderSchema = new mongoose.Schema({
     }
 });
 
+orderItemSchema.pre('save', function (next) {
+    this.tempValue = (parseFloat(this.price) * this.quantity).toFixed(2);
+    next();
+});
+
 orderSchema.method('toJSON', function () {
     const { __v, _id, ...object } = this.toObject();
     object.id = _id;
     return object;
+});
+
+orderSchema.pre('save', function (next) {
+    const totalItems = this.items.reduce((acc, item) => acc + parseFloat(item.tempValue), 0);
+    const total = (totalItems + parseFloat(this.deliveryCharges)).toFixed(2);
+    this.total = total;
+    next();
 });
 
 const OrderModel = db.model('order', orderSchema)
