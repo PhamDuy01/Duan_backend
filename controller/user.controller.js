@@ -1,9 +1,20 @@
 const UserService = require("../services/user.services");
 const User = require("../model/user.model")
+const Admin = require("../model/admin.model")
 
 exports.register = async (rep, res, next) => {
   try {
     const { email, password } = rep.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    const foundUser = await User.findOne({ email: email }).exec();
+    const foundAdmin = await Admin.findOne({ email: email }).exec();
+    if (foundUser || foundAdmin) {
+      return res.status(400).json({ message: "Email address already exits" });
+    }
+
     const successRes = await UserService.registerUser(email, password);
     res.json({
       status: true, success: "Đăng ký thành công!!!"
@@ -21,7 +32,7 @@ exports.login = async (req, res, next) => {
     }
 
     const user = await UserService.checkUser(email);
-    
+
     if (!user) {
       return res.status(401).json({ message: 'Incorrect email or password!' });
     }

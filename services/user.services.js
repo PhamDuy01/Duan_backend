@@ -1,7 +1,7 @@
 const UserModel = require("../model/user.model");
 const jwt = require('jsonwebtoken');
 class UserServices {
-    static async registerUser(email, password) {
+    static async  registerUser(email, password) {
         try {
             const createUser = new UserModel({ email, password });
             return await createUser.save();

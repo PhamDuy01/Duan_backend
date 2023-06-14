@@ -1,6 +1,7 @@
 const Administrator = require('../model/admin.model')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const User = require('../model/user.model')
  
 const handleAdminRegister = async (req, res) => {
     const { fullName, email, password } = req.body;
@@ -14,8 +15,9 @@ const handleAdminRegister = async (req, res) => {
         return res.send({ message: 'Password must be at least 8 characters!', status: 400 });
     }
 
+    const foundUser = await User.findOne({ email: email }).exec();
     const foundEmail = await Administrator.findOne({ email: email }).exec();
-    if (foundEmail) {
+    if (foundEmail || foundUser) {
         return res.send({ message: "Email address already exists!", status: 400 });
     }
 
