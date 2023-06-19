@@ -62,7 +62,7 @@ const orderSchema = new mongoose.Schema({
     },
     deliveryCharges: {
         type: String,
-        default: "20000",
+        default: "2.0",
     },
     created_at: {
         type: Date,
