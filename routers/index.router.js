@@ -5,6 +5,7 @@ const productRouter = require("./product.router")
 const categoryRouter = require("./category.router")
 const cartRouter = require("./cart.router")
 const orderRouter = require("./order.router")
+const favoriteRouter = require("./favorite.router")
 
 function setRoute(server) {
 
@@ -19,6 +20,8 @@ function setRoute(server) {
     server.use('/api/cart', cartRouter)
 
     server.use('/api/order', orderRouter)
+
+    server.use('/api/favorite', favoriteRouter)
 
 }
 
