@@ -15,6 +15,14 @@ const cartItemSchema = new mongoose.Schema({
     price: {
         type: String,
         required: true
+    },
+    imageUrl: {
+        type: String,
+        required: false
+    },
+    title: {
+        type: String,
+        required: false
     }
 });
 
@@ -28,6 +36,10 @@ const cartSchema = new mongoose.Schema({
         type: [cartItemSchema],
         required: true
     },
+    total: {
+        type: String,
+        required: false
+    },
     created_at: {
         type: Date,
         default: Date.now
@@ -36,6 +48,12 @@ const cartSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
+});
+
+cartSchema.pre('save', function (next) {
+    const total = this.items.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity), 0).toFixed(2);
+    this.total = total.toString();
+    next();
 });
 
 cartSchema.method('toJSON', function () {

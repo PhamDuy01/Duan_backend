@@ -3,7 +3,7 @@ const Cart = require('../model/cart.model');
 // Thêm sản phẩm vào giỏ hàng
 const addToCart = async (req, res) => {
     try {
-        const { user_id, product_id, quantity, price } = req.body;
+        const { user_id, product_id, quantity, price, title, imageUrl } = req.body;
 
         const cart = await Cart.findOne({ user_id });
         if (cart) {
@@ -13,7 +13,7 @@ const addToCart = async (req, res) => {
                 existingItem.quantity += quantity;
                 existingItem.price = price;
             } else {
-                cart.items.push({ product_id, quantity, price });
+                cart.items.push({ product_id, quantity, price, title, imageUrl });
             }
             cart.updated_at = Date.now();
             await cart.save();
@@ -21,7 +21,7 @@ const addToCart = async (req, res) => {
             // Tạo giỏ hàng mới nếu chưa tồn tại
             const newCart = new Cart({
                 user_id,
-                items: [{ product_id, quantity, price }]
+                items: [{ product_id, quantity, price, title, imageUrl }]
             });
             await newCart.save();
         }
@@ -40,10 +40,15 @@ const updateCartItemQuantity = async (req, res) => {
         const cart = await Cart.findOne({ user_id });
 
         if (cart) {
-            const existingItem = cart.items.find(item => item.product_id == product_id);
+            const existingItemIndex = cart.items.findIndex(item => item.product_id == product_id);
 
-            if (existingItem) {
-                existingItem.quantity = quantity;
+            if (existingItemIndex !== -1) {
+                const existingItem = cart.items[existingItemIndex];
+                if (quantity === 0) {
+                    cart.items.splice(existingItemIndex, 1);
+                } else {
+                    existingItem.quantity = quantity;
+                }
                 cart.updated_at = Date.now();
                 await cart.save();
                 res.status(200).json({ message: 'Cart item quantity updated' });
@@ -57,6 +62,7 @@ const updateCartItemQuantity = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 // Xóa sản phẩm khỏi giỏ hàng
 const removeCartItem = async (req, res) => {
