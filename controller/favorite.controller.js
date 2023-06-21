@@ -16,24 +16,43 @@ exports.getFavoritesByUserId = async (req, res) => {
 exports.addToFavorites = async (req, res) => {
     const productId = req.params.productId;
     const userId = req.params.userId;
-    const favorite = new FavoriteModel({
-        productId,
-        userId,
-    });
+    
     try {
+        // Check if the favorite already exists in the database
+        const existingFavorite = await FavoriteModel.findOne({ productId, userId });
+        
+        if (existingFavorite) {
+            return res.status(400).send({ message: 'Favorite already exists' });
+        }
+        
+        const favorite = new FavoriteModel({
+            productId,
+            userId,
+        });
+        
         const newFavorite = await favorite.save();
-        res.status(201).send(newFavorite);
+        res.status(200).send(newFavorite);
     } catch (err) {
         res.status(400).send({ message: err.message });
     }
 }
 
+
 exports.removeFavorite = async (req, res) => {
-    const id = req.params.id;
+    const productId = req.params.productId;
+    const userId = req.params.userId;
+
     try {
-        await FavoriteModel.findByIdAndDelete(id);
+        const result = await FavoriteModel.deleteOne({ productId, userId });
+
+        if (result.deletedCount === 0) {
+            return res.status(400).send({ message: 'Favorite does not exist' });
+        }
+
         res.status(200).send({ message: 'Favorite removed successfully' });
     } catch (err) {
-        res.status(500).send({ message: err.message });
+        res.status(400).send({ message: err.message });
     }
 }
+
+
