@@ -55,6 +55,18 @@ const getOrders = async (req, res) => {
   }
 };
 
+const getOrdersByUserId = async (req, res) => {
+  const userId = req.params.userId;
+  if (!userId) return res.status(400).send('User ID not provided');
+  
+  try {
+    const orders = await Order.find({ user_id: userId }).exec();
+    res.status(200).json({ orders });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const isPaid = async (req, res, next) => {
   const id = req.body.id;
   if (!id) return res.status(400).send('Order not found');
@@ -96,5 +108,6 @@ module.exports = {
   getOrderDetails,
   getOrders,
   isPaid,
-  removePaid
+  removePaid,
+  getOrdersByUserId
 };

@@ -4,6 +4,7 @@ const OrderController = require('../controller/order.controller');
 
 router.post("/create", OrderController.createOrder)
 router.get("/list", OrderController.getOrders)
+router.get("/list/:userId", OrderController.getOrdersByUserId)
 router.get("/detail/:orderId", OrderController.getOrderDetails)
 
 router.put("/on", OrderController.isPaid)
