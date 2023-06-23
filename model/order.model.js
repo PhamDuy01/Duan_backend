@@ -62,7 +62,7 @@ const orderSchema = new mongoose.Schema({
     },
     deliveryCharges: {
         type: String,
-        default: "2.0",
+        default: "20000",
     },
     created_at: {
         type: Date,
@@ -88,7 +88,7 @@ orderSchema.method('toJSON', function () {
 orderSchema.pre('save', function (next) {
     const totalItems = this.items.reduce((acc, item) => acc + parseFloat(item.tempValue), 0);
     const total = (totalItems + parseFloat(this.deliveryCharges)).toFixed(2);
-    this.total = total;
+    this.total = total - 20000;
     next();
 });
 
