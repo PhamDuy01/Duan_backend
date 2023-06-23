@@ -12,7 +12,7 @@ const orderItemSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    productName: {
+    title: {
         type: String,
         required: true
     },

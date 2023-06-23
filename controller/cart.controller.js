@@ -103,9 +103,30 @@ const getCartDetails = async (req, res) => {
     }
 };
 
+// Xóa tất cả các sản phẩm trong giỏ hàng của user
+const emptyCart = async (req, res) => {
+    try {
+        const { user_id } = req.params;
+
+        const cart = await Cart.findOne({ user_id });
+        if (cart) {
+            cart.items = []; // Xóa tất cả các sản phẩm trong giỏ hàng
+            cart.updated_at = Date.now();
+            await cart.save();
+            res.status(200).json({ message: 'Cart emptied' });
+        } else {
+            res.status(404).json({ error: 'Cart not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
 module.exports = {
     addToCart,
     updateCartItemQuantity,
     removeCartItem,
-    getCartDetails
+    getCartDetails,
+    emptyCart
 };
