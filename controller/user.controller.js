@@ -19,8 +19,8 @@ exports.register = async (rep, res, next) => {
     res.json({
       status: true, success: "Đăng ký thành công!!!"
     });
-  } catch (err) {
-    throw err
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 }
 
@@ -49,7 +49,7 @@ exports.login = async (req, res, next) => {
 
     res.status(200).json({ email: email, token: token, userId: user._id });
   } catch (error) {
-    throw error;
+    res.status(500).json({ error: error.message });
   }
 };
 
