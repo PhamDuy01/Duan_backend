@@ -75,7 +75,7 @@ const orderSchema = new mongoose.Schema({
 });
 
 orderItemSchema.pre('save', function (next) {
-    this.tempValue = (parseFloat(this.price) * this.quantity).toFixed(2);
+    this.tempValue = (parseFloat(this.price) * this.quantity);
     next();
 });
 
